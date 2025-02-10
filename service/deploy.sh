@@ -13,18 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-gcloud config set project <gcp-project-id>
+gcloud config set project x391-poc-project-vpc
 gcloud services enable cloudresourcemanager.googleapis.com
-gcloud auth application-default set-quota-project <gcp-project-id>
-printf "\nINFO - GCP project set to '<gcp-project-id>' succesfully!\n"
+gcloud auth application-default set-quota-project x391-poc-project-vpc
+printf "\nINFO - GCP project set to 'x391-poc-project-vpc' succesfully!\n"
 
-BUCKET_EXISTS=$(gcloud storage ls gs://<gcs-bucket> > /dev/null 2>&1 && echo "true" || echo "false")
+BUCKET_EXISTS=$(gcloud storage ls gs://x391-poc-project-vpc-vigenair > /dev/null 2>&1 && echo "true" || echo "false")
 if "${BUCKET_EXISTS}"; then
-  printf "\nWARN - Bucket '<gcs-bucket>' already exists. Skipping bucket creation...\n"
+  printf "\nWARN - Bucket 'x391-poc-project-vpc-vigenair' already exists. Skipping bucket creation...\n"
 else
-  gcloud storage buckets create gs://<gcs-bucket> --project=<gcp-project-id> --location=<gcs-location> --uniform-bucket-level-access
+  gcloud storage buckets create gs://x391-poc-project-vpc-vigenair --project=x391-poc-project-vpc --location=africa-south1 --uniform-bucket-level-access
   test $? -eq 0 || exit
-  printf "\nINFO - Bucket '<gcs-bucket>' created successfully in location '<gcs-location>'!\n"
+  printf "\nINFO - Bucket 'x391-poc-project-vpc-vigenair' created successfully in location 'africa-south1'!\n"
 fi
 
 printf "\nINFO - Enabling GCP APIs...\n"
@@ -43,14 +43,14 @@ gcloud services enable \
   storage.googleapis.com \
   videointelligence.googleapis.com
 
-PROJECT_NUMBER=$(gcloud projects describe <gcp-project-id> --format="value(projectNumber)")
+PROJECT_NUMBER=$(gcloud projects describe x391-poc-project-vpc --format="value(projectNumber)")
 STORAGE_SERVICE_ACCOUNT="service-${PROJECT_NUMBER}@gs-project-accounts.iam.gserviceaccount.com"
 EVENTARC_SERVICE_ACCOUNT="service-${PROJECT_NUMBER}@gcp-sa-eventarc.iam.gserviceaccount.com"
 VERTEXAI_SERVICE_ACCOUNT="service-${PROJECT_NUMBER}@gcp-sa-aiplatform.iam.gserviceaccount.com"
 COMPUTE_SERVICE_ACCOUNT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
 printf "\nINFO - Creating Service Agents and granting roles...\n"
 for SA in "aiplatform.googleapis.com" "storage.googleapis.com" "eventarc.googleapis.com"; do
-    gcloud --no-user-output-enabled beta services identity create --project=<gcp-project-id> \
+    gcloud --no-user-output-enabled beta services identity create --project=x391-poc-project-vpc \
         --service="${SA}"
 done
 COMPUTE_SA_ROLES=(
@@ -65,20 +65,20 @@ COMPUTE_SA_ROLES=(
 )
 for COMPUTE_SA_ROLE in "${COMPUTE_SA_ROLES[@]}"; do
     gcloud --no-user-output-enabled projects add-iam-policy-binding \
-        <gcp-project-id> \
+        x391-poc-project-vpc \
         --member="serviceAccount:${COMPUTE_SERVICE_ACCOUNT}" \
         --role="${COMPUTE_SA_ROLE}"
 done
 gcloud --no-user-output-enabled projects add-iam-policy-binding \
-    <gcp-project-id> \
+    x391-poc-project-vpc \
     --member="serviceAccount:${STORAGE_SERVICE_ACCOUNT}" \
     --role="roles/pubsub.publisher"
 gcloud --no-user-output-enabled projects add-iam-policy-binding \
-    <gcp-project-id> \
+    x391-poc-project-vpc \
     --member="serviceAccount:${EVENTARC_SERVICE_ACCOUNT}" \
     --role="roles/eventarc.serviceAgent"
 gcloud --no-user-output-enabled projects add-iam-policy-binding \
-    <gcp-project-id> \
+    x391-poc-project-vpc \
     --member="serviceAccount:${VERTEXAI_SERVICE_ACCOUNT}" \
     --role="roles/storage.objectViewer"
 printf "Operation finished successfully!\n"
@@ -86,7 +86,7 @@ printf "\nINFO - Deploying the 'vigenair' Cloud Function...\n"
 gcloud functions deploy vigenair \
 --env-vars-file .env.yaml \
 --gen2 \
---region=<gcp-region> \
+--region=africa-south1 \
 --runtime=python310 \
 --source=. \
 --entry-point=gcs_file_uploaded \
@@ -94,6 +94,6 @@ gcloud functions deploy vigenair \
 --memory=32Gi \
 --cpu=8 \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
---trigger-event-filters="bucket=<gcs-bucket>" \
---trigger-location="<gcs-location>"
+--trigger-event-filters="bucket=x391-poc-project-vpc-vigenair" \
+--trigger-location="africa-south1"
 test $? -eq 0 || exit
