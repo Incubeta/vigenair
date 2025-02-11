@@ -167,7 +167,7 @@ export class UiDeploymentHandler {
     }
     console.log();
     console.log("Creating Apps Script Project...");
-    const res = await ClaspManager.create("ViGenAiR", "./dist", "./ui");
+    const res = await ClaspManager.create("ViGenAiR - Beiersdorf", "./dist", "./ui");
     console.log();
     console.log("IMPORTANT -> Google Sheets Link:", res.sheetLink);
     console.log("IMPORTANT -> Apps Script Link:", res.scriptLink);
