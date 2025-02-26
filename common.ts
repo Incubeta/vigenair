@@ -91,7 +91,7 @@ class ClaspManager {
       [
         "create",
         "--type",
-        "sheets",
+        "webapp",
         "--rootDir",
         scriptRootDir,
         "--title",
@@ -99,7 +99,6 @@ class ClaspManager {
       ],
       { encoding: "utf-8" }
     );
-
     await fs.move(
       path.join(scriptRootDir, ".clasp.json"),
       path.join(filesRootDir, ".clasp-dev.json")
@@ -112,7 +111,7 @@ class ClaspManager {
     const output = res.output.join();
 
     return {
-      sheetLink: this.extractSheetsLink(output),
+      // sheetLink: this.extractSheetsLink(output),
       scriptLink: this.extractScriptLink(output),
     };
   }
@@ -167,9 +166,9 @@ export class UiDeploymentHandler {
     }
     console.log();
     console.log("Creating Apps Script Project...");
-    const res = await ClaspManager.create("ViGenAiR", "./dist", "./ui");
+    const res = await ClaspManager.create("ViGenAiR - Shoprite", "./dist", "./ui");
     console.log();
-    console.log("IMPORTANT -> Google Sheets Link:", res.sheetLink);
+    // console.log("IMPORTANT -> Google Sheets Link:", res.sheetLink);
     console.log("IMPORTANT -> Apps Script Link:", res.scriptLink);
     console.log();
   }
