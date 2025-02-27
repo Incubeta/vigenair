@@ -158,7 +158,7 @@ export class UiDeploymentHandler {
     }
     console.log();
     console.log("Creating Apps Script Project...");
-    const scriptLink = await ClaspManager.create("ViGenAiR", "./dist", "./ui");
+    const scriptLink = await ClaspManager.create("ViGenAiR - REWE", "./dist", "./ui");
     console.log();
     console.log("IMPORTANT -> Apps Script Link:", scriptLink);
     console.log();

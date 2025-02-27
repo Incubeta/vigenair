@@ -226,7 +226,19 @@ function getVideoLanguage(gcsFolder: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+function checkUserDomain() {
+  const email = Session.getActiveUser().getEmail();
+  const allowedDomains = ['incubeta.com', 'rewe-group.com'];
+
+  if (email && !allowedDomains.some(domain => email.endsWith(`@${domain}`))) {
+    throw new Error('Access denied: Your are not authorized to access this app.');
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function doGet(e: GoogleAppsScript.Events.DoGet) {
+  checkUserDomain();
+
   const output = HtmlService.createTemplateFromFile('ui')
     .evaluate()
     .setTitle('ViGenAiR - Recrafting Video Ads with Generative AI')

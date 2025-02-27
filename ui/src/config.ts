@@ -16,7 +16,7 @@
 
 export const CONFIG = {
   cloudStorage: {
-    bucket: '<gcs-bucket>',
+    bucket: 'de-tech-cli-reweaivideoengine-vigenair',
     endpointBase: 'https://storage.googleapis.com/storage/v1',
     uploadEndpointBase: 'https://storage.googleapis.com/upload/storage/v1',
     authenticatedEndpointBase: 'https://storage.mtls.cloud.google.com',
@@ -24,8 +24,8 @@ export const CONFIG = {
   },
   vertexAi: {
     endpoint: 'aiplatform.googleapis.com',
-    projectId: '<gcp-project-id>',
-    location: '<vertexai-region>',
+    projectId: 'de-tech-cli-reweaivideoengine',
+    location: 'europe-west1',
     quotaLimitDelay: 10 * 1000, // 10s,
     model: 'gemini-2.0-flash-001',
     modelParams: {
